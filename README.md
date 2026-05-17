@@ -2,7 +2,7 @@
 
 API desenvolvida com **Spring Boot** para gerenciar o cadastro de clientes de uma loja, utilizando armazenamento em memória (sem banco de dados).
 
-Projeto prático da disciplina de Desenvolvimento de Sistemas — **Unifacef**.
+Projeto prático da disciplina de Paradigmas da Programacao -ORIENTADO AO OBJETO — **Unifacef**.
 
 ---
 

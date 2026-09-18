@@ -5,15 +5,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@Transactional
 class ClienteControllerIntegrationTest {
 
     @Autowired
@@ -38,8 +39,8 @@ class ClienteControllerIntegrationTest {
                                 }
                                 """))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/clientes/1"))
-                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(header().exists("Location"))
+                .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.nome").value("Ana"))
                 .andExpect(jsonPath("$.email").value("ana@email.com"))
                 .andExpect(jsonPath("$.idade").value(25));
@@ -67,11 +68,11 @@ class ClienteControllerIntegrationTest {
 
     @Test
     void deveBuscarClientePorId() throws Exception {
-        cadastrarCliente();
+        String localizacao = cadastrarCliente();
 
-        mockMvc.perform(get("/clientes/1"))
+        mockMvc.perform(get(localizacao))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.nome").value("Ana"));
     }
 
@@ -79,15 +80,15 @@ class ClienteControllerIntegrationTest {
     void deveRetornarNotFoundAoBuscarClienteInexistente()
             throws Exception {
 
-        mockMvc.perform(get("/clientes/999"))
+        mockMvc.perform(get("/clientes/999999"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void deveAtualizarCliente() throws Exception {
-        cadastrarCliente();
+        String localizacao = cadastrarCliente();
 
-        mockMvc.perform(put("/clientes/1")
+        mockMvc.perform(put(localizacao)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -97,24 +98,24 @@ class ClienteControllerIntegrationTest {
                                 }
                                 """))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.nome").value("Ana Souza"))
                 .andExpect(jsonPath("$.idade").value(26));
     }
 
     @Test
     void deveRemoverCliente() throws Exception {
-        cadastrarCliente();
+        String localizacao = cadastrarCliente();
 
-        mockMvc.perform(delete("/clientes/1"))
+        mockMvc.perform(delete(localizacao))
                 .andExpect(status().isNoContent());
 
-        mockMvc.perform(get("/clientes/1"))
+        mockMvc.perform(get(localizacao))
                 .andExpect(status().isNotFound());
     }
 
-    private void cadastrarCliente() throws Exception {
-        mockMvc.perform(post("/clientes")
+    private String cadastrarCliente() throws Exception {
+        MvcResult resultado = mockMvc.perform(post("/clientes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -123,6 +124,10 @@ class ClienteControllerIntegrationTest {
                                   "idade": 25
                                 }
                                 """))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(header().exists("Location"))
+                .andReturn();
+
+        return resultado.getResponse().getHeader("Location");
     }
 }

@@ -27,6 +27,7 @@ O projeto foi desenvolvido como atividade prática da disciplina de **Paradigmas
 - Persistência dos dados em PostgreSQL
 - Versionamento do banco de dados com Flyway
 - Validação de nome, e-mail e idade
+- Impedimento de e-mails duplicados
 - Respostas HTTP adequadas para cada operação
 - Testes unitários, de validação e de integração
 
@@ -88,7 +89,7 @@ O campo `id` é gerado automaticamente pelo PostgreSQL durante o cadastro.
 ### Regras de validação
 
 - `nome`: obrigatório e não pode conter apenas espaços
-- `email`: obrigatório e deve possuir formato válido
+- `email`: obrigatório, deve possuir formato válido e ser único
 - `idade`: obrigatória e deve estar entre 0 e 120
 
 ### Resposta para dados inválidos
@@ -102,6 +103,16 @@ Quando uma requisição contém dados inválidos, a API retorna `400 Bad Request
 }
 ```
 
+### Resposta para e-mail duplicado
+
+Quando o e-mail informado já pertence a outro cliente, a API retorna `409 Conflict`:
+
+```json
+{
+  "email": "E-mail já cadastrado"
+}
+```
+
 ## Endpoints
 
 URL base: `http://localhost:8080`
@@ -110,8 +121,8 @@ URL base: `http://localhost:8080`
 |:--|:--|:--|:--|
 | `GET` | `/clientes` | Lista todos os clientes | `200 OK` |
 | `GET` | `/clientes/{id}` | Busca um cliente pelo ID | `200 OK` ou `404 Not Found` |
-| `POST` | `/clientes` | Cadastra um cliente | `201 Created` ou `400 Bad Request` |
-| `PUT` | `/clientes/{id}` | Atualiza um cliente | `200 OK`, `400 Bad Request` ou `404 Not Found` |
+| `POST` | `/clientes` | Cadastra um cliente | `201 Created`, `400 Bad Request` ou `409 Conflict` |
+| `PUT` | `/clientes/{id}` | Atualiza um cliente | `200 OK`, `400 Bad Request`, `404 Not Found` ou `409 Conflict` |
 | `DELETE` | `/clientes/{id}` | Remove um cliente | `204 No Content` ou `404 Not Found` |
 
 ## Documentação interativa
@@ -276,7 +287,6 @@ curl -X POST http://localhost:8080/clientes \
 ## Próximas melhorias
 
 - Criar paginação e filtros de busca
-- Adicionar verificação de e-mail duplicado
 
 ## Aprendizados
 

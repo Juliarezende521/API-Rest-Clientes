@@ -24,6 +24,7 @@ O projeto foi desenvolvido como atividade prática da disciplina de **Paradigmas
 - Atualização de clientes pelo ID
 - Remoção de clientes pelo ID
 - Geração automática de identificadores
+- Validação de nome, e-mail e idade
 - Respostas HTTP adequadas para cada operação
 
 ## Tecnologias
@@ -32,6 +33,7 @@ O projeto foi desenvolvido como atividade prática da disciplina de **Paradigmas
 - Spring Boot 4.0.6
 - Spring Web MVC
 - Maven
+- Jakarta Bean Validation
 - JUnit 5
 
 ## Arquitetura
@@ -66,6 +68,12 @@ src/main/java/dc/unifacef/memoria/
 ```
 
 O campo `id` é gerado automaticamente durante o cadastro.
+
+### Regras de validação
+
+- `nome`: obrigatório e não pode conter apenas espaços
+- `email`: obrigatório e deve possuir formato válido
+- `idade`: obrigatória e deve estar entre 0 e 120
 
 ## Endpoints
 
@@ -199,8 +207,7 @@ O projeto não utiliza banco de dados. Como o armazenamento é feito em memória
 
 ## Próximas melhorias
 
-- Validar nome, e-mail e idade
-- Criar tratamento global de erros
+- Padronizar as respostas de erros de validação
 - Adicionar testes unitários e de integração
 - Persistir os dados com PostgreSQL
 - Documentar a API com Swagger/OpenAPI

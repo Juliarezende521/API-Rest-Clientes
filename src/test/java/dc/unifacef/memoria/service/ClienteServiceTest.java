@@ -69,7 +69,7 @@ class ClienteServiceTest {
         assertNotNull(atualizado);
         assertEquals(criado.getId(), atualizado.getId());
         assertEquals("Ana Souza", atualizado.getNome());
-        assertEquals(26, atualizado.getIdade());
+        assertEquals(Integer.valueOf(26), atualizado.getIdade());
     }
 
     @Test

@@ -1,50 +1,70 @@
 package dc.unifacef.memoria.service;
 
 import dc.unifacef.memoria.model.Cliente;
+import dc.unifacef.memoria.repository.ClienteRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 class ClienteServiceTest {
 
+    private ClienteRepository repository;
     private ClienteService service;
 
     @BeforeEach
     void preparar() {
-        service = new ClienteService();
+        repository = mock(ClienteRepository.class);
+        service = new ClienteService(repository);
     }
 
     @Test
-    void deveCriarClienteComIdAutomatico() {
-        Cliente cliente = new Cliente(null, "Ana", "ana@email.com", 25);
+    void deveCriarClienteComIdGeradoPeloBanco() {
+        Cliente cliente = new Cliente(
+                null, "Ana", "ana@email.com", 25
+        );
+
+        when(repository.save(any(Cliente.class)))
+                .thenAnswer(invocacao -> {
+                    Cliente salvo = invocacao.getArgument(0);
+                    salvo.setId(1L);
+                    return salvo;
+                });
 
         Cliente criado = service.criar(cliente);
 
         assertEquals(1L, criado.getId());
         assertEquals("Ana", criado.getNome());
-        assertEquals(1, service.listar().size());
+        verify(repository).save(cliente);
     }
 
     @Test
     void deveListarClientes() {
-        service.criar(new Cliente(null, "Ana", "ana@email.com", 25));
-        service.criar(new Cliente(null, "Bruno", "bruno@email.com", 30));
+        when(repository.findAll()).thenReturn(List.of(
+                new Cliente(1L, "Ana", "ana@email.com", 25),
+                new Cliente(2L, "Bruno", "bruno@email.com", 30)
+        ));
 
         List<Cliente> clientes = service.listar();
 
         assertEquals(2, clientes.size());
+        verify(repository).findAll();
     }
 
     @Test
     void deveBuscarClientePorId() {
-        Cliente criado = service.criar(
-                new Cliente(null, "Ana", "ana@email.com", 25)
+        Cliente cliente = new Cliente(
+                1L, "Ana", "ana@email.com", 25
         );
+        when(repository.findById(1L))
+                .thenReturn(Optional.of(cliente));
 
-        Cliente encontrado = service.buscarPorId(criado.getId());
+        Cliente encontrado = service.buscarPorId(1L);
 
         assertNotNull(encontrado);
         assertEquals("Ana", encontrado.getNome());
@@ -52,49 +72,61 @@ class ClienteServiceTest {
 
     @Test
     void deveRetornarNullQuandoClienteNaoExistir() {
+        when(repository.findById(999L)).thenReturn(Optional.empty());
+
         assertNull(service.buscarPorId(999L));
     }
 
     @Test
     void deveAtualizarClienteExistente() {
-        Cliente criado = service.criar(
-                new Cliente(null, "Ana", "ana@email.com", 25)
+        Cliente existente = new Cliente(
+                1L, "Ana", "ana@email.com", 25
         );
         Cliente novosDados = new Cliente(
                 null, "Ana Souza", "ana.souza@email.com", 26
         );
 
-        Cliente atualizado = service.atualizar(criado.getId(), novosDados);
+        when(repository.findById(1L))
+                .thenReturn(Optional.of(existente));
+        when(repository.save(any(Cliente.class)))
+                .thenAnswer(invocacao -> invocacao.getArgument(0));
+
+        Cliente atualizado = service.atualizar(1L, novosDados);
 
         assertNotNull(atualizado);
-        assertEquals(criado.getId(), atualizado.getId());
+        assertEquals(1L, atualizado.getId());
         assertEquals("Ana Souza", atualizado.getNome());
         assertEquals(Integer.valueOf(26), atualizado.getIdade());
+        verify(repository).save(existente);
     }
 
     @Test
     void deveRetornarNullAoAtualizarClienteInexistente() {
+        when(repository.findById(999L)).thenReturn(Optional.empty());
+
         Cliente novosDados = new Cliente(
                 null, "Ana", "ana@email.com", 25
         );
 
         assertNull(service.atualizar(999L, novosDados));
+        verify(repository, never()).save(any());
     }
 
     @Test
     void deveRemoverClienteExistente() {
-        Cliente criado = service.criar(
-                new Cliente(null, "Ana", "ana@email.com", 25)
-        );
+        when(repository.existsById(1L)).thenReturn(true);
 
-        boolean removido = service.remover(criado.getId());
+        boolean removido = service.remover(1L);
 
         assertTrue(removido);
-        assertTrue(service.listar().isEmpty());
+        verify(repository).deleteById(1L);
     }
 
     @Test
     void deveRetornarFalseAoRemoverClienteInexistente() {
+        when(repository.existsById(999L)).thenReturn(false);
+
         assertFalse(service.remover(999L));
+        verify(repository, never()).deleteById(anyLong());
     }
 }

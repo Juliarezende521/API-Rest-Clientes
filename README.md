@@ -20,6 +20,7 @@ O projeto foi desenvolvido como atividade prática da disciplina de **Paradigmas
 
 - Cadastro de clientes
 - Listagem de todos os clientes
+- Busca de cliente pelo ID
 - Atualização de clientes pelo ID
 - Remoção de clientes pelo ID
 - Geração automática de identificadores
@@ -73,6 +74,7 @@ URL base: `http://localhost:8080`
 | Método | Endpoint | Descrição | Resposta |
 |:--|:--|:--|:--|
 | `GET` | `/clientes` | Lista todos os clientes | `200 OK` |
+| `GET` | `/clientes/{id}` | Busca um cliente pelo ID | `200 OK` ou `404 Not Found` |
 | `POST` | `/clientes` | Cadastra um cliente | `201 Created` |
 | `PUT` | `/clientes/{id}` | Atualiza um cliente | `200 OK` ou `404 Not Found` |
 | `DELETE` | `/clientes/{id}` | Remove um cliente | `204 No Content` ou `404 Not Found` |
@@ -114,6 +116,14 @@ Exemplo de resposta:
   }
 ]
 ```
+
+### Buscar um cliente pelo ID
+
+```http
+GET /clientes/1
+```
+
+A API retorna `200 OK` com os dados do cliente ou `404 Not Found` quando o ID não existe.
 
 ### Atualizar um cliente
 
@@ -189,7 +199,6 @@ O projeto não utiliza banco de dados. Como o armazenamento é feito em memória
 
 ## Próximas melhorias
 
-- Adicionar busca de cliente por ID
 - Validar nome, e-mail e idade
 - Criar tratamento global de erros
 - Adicionar testes unitários e de integração

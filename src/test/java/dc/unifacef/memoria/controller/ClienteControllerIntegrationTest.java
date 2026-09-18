@@ -67,6 +67,24 @@ class ClienteControllerIntegrationTest {
     }
 
     @Test
+    void deveRejeitarEmailDuplicado() throws Exception {
+        cadastrarCliente();
+
+        mockMvc.perform(post("/clientes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "nome": "Outra Ana",
+                                  "email": "ANA@EMAIL.COM",
+                                  "idade": 30
+                                }
+                                """))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.email")
+                        .value("E-mail já cadastrado"));
+    }
+
+    @Test
     void deveBuscarClientePorId() throws Exception {
         String localizacao = cadastrarCliente();
 

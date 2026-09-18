@@ -1,14 +1,22 @@
 package dc.unifacef.memoria.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+@Entity
+@Table(name = "clientes")
 public class Cliente {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "Identificador gerado pela API", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
     @Schema(description = "Nome completo do cliente", example = "João Silva")

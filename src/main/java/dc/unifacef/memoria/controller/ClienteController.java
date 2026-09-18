@@ -2,6 +2,7 @@ package dc.unifacef.memoria.controller;
 
 import dc.unifacef.memoria.model.Cliente;
 import dc.unifacef.memoria.service.ClienteService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,7 @@ public class ClienteController {
 
     // POST - cadastrar um novo cliente e retornar 201 Created
     @PostMapping
-    public ResponseEntity<Cliente> criar(@RequestBody Cliente cliente) {
+    public ResponseEntity<Cliente> criar(@Valid @RequestBody Cliente cliente) {
         Cliente novo = service.criar(cliente);
         // URI Uniform Resource Identifier
         URI uri = URI.create("/clientes/" + novo.getId());
@@ -57,7 +58,7 @@ public class ClienteController {
     // PUT - atualizar um cliente passando o ID na URL e o novo JSON no corpo
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> atualizar(@PathVariable Long id,
-                                             @RequestBody Cliente novo) {
+                                             @Valid @RequestBody Cliente novo) {
         Cliente resposta = service.atualizar(id, novo);
         if (resposta != null) {
             // atualizou e retornou cliente atualizado

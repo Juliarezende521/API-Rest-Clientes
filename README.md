@@ -208,7 +208,7 @@ O projeto não utiliza banco de dados. Como o armazenamento é feito em memória
 ## Próximas melhorias
 
 - Padronizar as respostas de erros de validação
-- Adicionar testes unitários e de integração
+- Adicionar testes de integração dos endpoints
 - Persistir os dados com PostgreSQL
 - Documentar a API com Swagger/OpenAPI
 

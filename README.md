@@ -34,6 +34,7 @@ O projeto foi desenvolvido como atividade prática da disciplina de **Paradigmas
 - Spring Web MVC
 - Maven
 - Jakarta Bean Validation
+- OpenAPI 3 e Swagger UI
 - JUnit 5
 
 ## Arquitetura
@@ -42,6 +43,8 @@ A aplicação está separada em camadas:
 
 ```text
 src/main/java/dc/unifacef/memoria/
+├── config/
+│   └── OpenApiConfig.java
 ├── controller/
 │   └── ClienteController.java
 ├── exception/
@@ -53,6 +56,7 @@ src/main/java/dc/unifacef/memoria/
 └── MemoriaApplication.java
 ```
 
+- **Config:** define as informações exibidas na documentação OpenAPI.
 - **Controller:** recebe as requisições HTTP e devolve as respostas.
 - **Service:** concentra as regras de cadastro, busca, atualização e remoção.
 - **Exception:** organiza as respostas dos erros de validação.
@@ -100,6 +104,16 @@ URL base: `http://localhost:8080`
 | `POST` | `/clientes` | Cadastra um cliente | `201 Created` ou `400 Bad Request` |
 | `PUT` | `/clientes/{id}` | Atualiza um cliente | `200 OK`, `400 Bad Request` ou `404 Not Found` |
 | `DELETE` | `/clientes/{id}` | Remove um cliente | `204 No Content` ou `404 Not Found` |
+
+## Documentação interativa
+
+Com a aplicação em execução, acesse:
+
+- **Swagger UI:** [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- **OpenAPI em JSON:** [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
+- **OpenAPI em YAML:** [http://localhost:8080/v3/api-docs.yaml](http://localhost:8080/v3/api-docs.yaml)
+
+O Swagger UI permite visualizar e testar todos os endpoints diretamente pelo navegador.
 
 ## Exemplos de uso
 
@@ -223,7 +237,6 @@ O projeto não utiliza banco de dados. Como o armazenamento é feito em memória
 
 - Adicionar testes de integração dos endpoints
 - Persistir os dados com PostgreSQL
-- Documentar a API com Swagger/OpenAPI
 
 ## Aprendizados
 

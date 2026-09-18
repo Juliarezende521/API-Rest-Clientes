@@ -1,7 +1,7 @@
 <h1 align="center">API REST de Clientes</h1>
 
 <p align="center">
-  CRUD de clientes desenvolvido com Java e Spring Boot, utilizando armazenamento em memória.
+  CRUD de clientes desenvolvido com Java, Spring Boot e PostgreSQL.
 </p>
 
 <p align="center">
@@ -12,7 +12,7 @@
 
 ## Sobre o projeto
 
-Esta API permite cadastrar, listar, atualizar e remover clientes de uma loja. Os dados são armazenados em memória por meio de uma lista, portanto são apagados quando a aplicação é encerrada.
+Esta API permite cadastrar, listar, atualizar e remover clientes de uma loja. Os dados são persistidos em PostgreSQL e a estrutura do banco é versionada com Flyway.
 
 O projeto foi desenvolvido como atividade prática da disciplina de **Paradigmas de Programação Orientada a Objetos**, no curso de Ciência da Computação da **Uni-FACEF**.
 
@@ -23,7 +23,9 @@ O projeto foi desenvolvido como atividade prática da disciplina de **Paradigmas
 - Busca de cliente pelo ID
 - Atualização de clientes pelo ID
 - Remoção de clientes pelo ID
-- Geração automática de identificadores
+- Geração automática de identificadores pelo banco
+- Persistência dos dados em PostgreSQL
+- Versionamento do banco de dados com Flyway
 - Validação de nome, e-mail e idade
 - Respostas HTTP adequadas para cada operação
 - Testes unitários, de validação e de integração
@@ -33,6 +35,9 @@ O projeto foi desenvolvido como atividade prática da disciplina de **Paradigmas
 - Java 21
 - Spring Boot 4.0.6
 - Spring Web MVC
+- Spring Data JPA
+- PostgreSQL
+- Flyway
 - Maven
 - Jakarta Bean Validation
 - OpenAPI 3 e Swagger UI
@@ -52,6 +57,8 @@ src/main/java/dc/unifacef/memoria/
 │   └── TratamentoGlobalExceptionHandler.java
 ├── model/
 │   └── Cliente.java
+├── repository/
+│   └── ClienteRepository.java
 ├── service/
 │   └── ClienteService.java
 └── MemoriaApplication.java
@@ -60,6 +67,7 @@ src/main/java/dc/unifacef/memoria/
 - **Config:** define as informações exibidas na documentação OpenAPI.
 - **Controller:** recebe as requisições HTTP e devolve as respostas.
 - **Service:** concentra as regras de cadastro, busca, atualização e remoção.
+- **Repository:** realiza a persistência dos clientes com Spring Data JPA.
 - **Exception:** organiza as respostas dos erros de validação.
 - **Model:** representa e valida os dados de um cliente.
 - **Application:** inicializa a aplicação Spring Boot.
@@ -75,7 +83,7 @@ src/main/java/dc/unifacef/memoria/
 }
 ```
 
-O campo `id` é gerado automaticamente durante o cadastro.
+O campo `id` é gerado automaticamente pelo PostgreSQL durante o cadastro.
 
 ### Regras de validação
 
@@ -192,6 +200,22 @@ A API retorna `204 No Content` quando a remoção é concluída ou `404 Not Foun
 - Java 21
 - Git
 
+### Banco de dados
+
+Com Docker instalado, inicie o PostgreSQL:
+
+```bash
+docker compose up -d
+```
+
+A configuração padrão cria o banco `clientes` na porta `5432`. É possível usar outro PostgreSQL definindo:
+
+- `DB_URL`
+- `DB_USERNAME`
+- `DB_PASSWORD`
+
+O Flyway cria a tabela automaticamente ao iniciar a aplicação.
+
 ### Instalação
 
 ```bash
@@ -249,13 +273,10 @@ curl -X POST http://localhost:8080/clientes \
   -d '{"nome":"João Silva","email":"joao@email.com","idade":28}'
 ```
 
-## Limitação atual
-
-O projeto não utiliza banco de dados. Como o armazenamento é feito em memória, todos os clientes cadastrados são perdidos quando a aplicação é reiniciada.
-
 ## Próximas melhorias
 
-- Persistir os dados com PostgreSQL
+- Criar paginação e filtros de busca
+- Adicionar verificação de e-mail duplicado
 
 ## Aprendizados
 

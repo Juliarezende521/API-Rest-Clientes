@@ -2,6 +2,8 @@ package dc.unifacef.memoria.controller;
 
 import dc.unifacef.memoria.model.Cliente;
 import dc.unifacef.memoria.service.ClienteService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +12,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController // controlador de requisição REST
+@Tag(name = "Clientes", description = "Operações de gerenciamento de clientes")
 @RequestMapping("/clientes") // mapeamento da requisição
 public class ClienteController {
 
@@ -20,12 +23,14 @@ public class ClienteController {
     }
 
     // GET - listar todos os clientes
+    @Operation(summary = "Listar todos os clientes")
     @GetMapping
     public ResponseEntity<List<Cliente>> listar() {
         return ResponseEntity.ok(service.listar());
     }
 
     // GET - buscar um cliente pelo ID
+    @Operation(summary = "Buscar um cliente pelo ID")
     @GetMapping("/{id}")
     public ResponseEntity<Cliente> buscarPorId(@PathVariable Long id) {
         Cliente cliente = service.buscarPorId(id);
@@ -38,6 +43,7 @@ public class ClienteController {
     }
 
     // POST - cadastrar um novo cliente e retornar 201 Created
+    @Operation(summary = "Cadastrar um novo cliente")
     @PostMapping
     public ResponseEntity<Cliente> criar(@Valid @RequestBody Cliente cliente) {
         Cliente novo = service.criar(cliente);
@@ -47,6 +53,7 @@ public class ClienteController {
     }
 
     // DELETE - remover um cliente passando o ID na URL
+    @Operation(summary = "Remover um cliente pelo ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> remover(@PathVariable Long id) {
         if (service.remover(id)) {
@@ -57,6 +64,7 @@ public class ClienteController {
     }
 
     // PUT - atualizar um cliente passando o ID na URL e o novo JSON no corpo
+    @Operation(summary = "Atualizar um cliente pelo ID")
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> atualizar(@PathVariable Long id,
                                              @Valid @RequestBody Cliente novo) {

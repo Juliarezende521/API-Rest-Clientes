@@ -26,6 +26,7 @@ O projeto foi desenvolvido como atividade prática da disciplina de **Paradigmas
 - Geração automática de identificadores
 - Validação de nome, e-mail e idade
 - Respostas HTTP adequadas para cada operação
+- Testes unitários, de validação e de integração
 
 ## Tecnologias
 
@@ -212,7 +213,26 @@ No Windows:
 
 Depois, acesse `http://localhost:8080/clientes`.
 
-## Como testar
+## Testes automatizados
+
+O projeto possui testes unitários e de integração para verificar:
+
+- Regras do serviço de clientes
+- Validações do modelo
+- Cadastro e listagem
+- Busca por ID
+- Atualização e remoção
+- Respostas `400 Bad Request` e `404 Not Found`
+
+Para executar:
+
+```bash
+./mvnw test
+```
+
+Os testes também são executados automaticamente pelo GitHub Actions a cada alteração enviada para a branch `main`.
+
+## Como testar manualmente
 
 Os endpoints podem ser testados com:
 
@@ -235,7 +255,6 @@ O projeto não utiliza banco de dados. Como o armazenamento é feito em memória
 
 ## Próximas melhorias
 
-- Adicionar testes de integração dos endpoints
 - Persistir os dados com PostgreSQL
 
 ## Aprendizados

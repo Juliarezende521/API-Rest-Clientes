@@ -44,6 +44,8 @@ A aplicação está separada em camadas:
 src/main/java/dc/unifacef/memoria/
 ├── controller/
 │   └── ClienteController.java
+├── exception/
+│   └── TratamentoGlobalExceptionHandler.java
 ├── model/
 │   └── Cliente.java
 ├── service/
@@ -53,7 +55,8 @@ src/main/java/dc/unifacef/memoria/
 
 - **Controller:** recebe as requisições HTTP e devolve as respostas.
 - **Service:** concentra as regras de cadastro, busca, atualização e remoção.
-- **Model:** representa os dados de um cliente.
+- **Exception:** organiza as respostas dos erros de validação.
+- **Model:** representa e valida os dados de um cliente.
 - **Application:** inicializa a aplicação Spring Boot.
 
 ## Modelo de cliente
@@ -75,6 +78,17 @@ O campo `id` é gerado automaticamente durante o cadastro.
 - `email`: obrigatório e deve possuir formato válido
 - `idade`: obrigatória e deve estar entre 0 e 120
 
+### Resposta para dados inválidos
+
+Quando uma requisição contém dados inválidos, a API retorna `400 Bad Request` e informa os campos que precisam ser corrigidos:
+
+```json
+{
+  "nome": "O nome é obrigatório",
+  "email": "Informe um e-mail válido"
+}
+```
+
 ## Endpoints
 
 URL base: `http://localhost:8080`
@@ -83,8 +97,8 @@ URL base: `http://localhost:8080`
 |:--|:--|:--|:--|
 | `GET` | `/clientes` | Lista todos os clientes | `200 OK` |
 | `GET` | `/clientes/{id}` | Busca um cliente pelo ID | `200 OK` ou `404 Not Found` |
-| `POST` | `/clientes` | Cadastra um cliente | `201 Created` |
-| `PUT` | `/clientes/{id}` | Atualiza um cliente | `200 OK` ou `404 Not Found` |
+| `POST` | `/clientes` | Cadastra um cliente | `201 Created` ou `400 Bad Request` |
+| `PUT` | `/clientes/{id}` | Atualiza um cliente | `200 OK`, `400 Bad Request` ou `404 Not Found` |
 | `DELETE` | `/clientes/{id}` | Remove um cliente | `204 No Content` ou `404 Not Found` |
 
 ## Exemplos de uso
@@ -207,7 +221,6 @@ O projeto não utiliza banco de dados. Como o armazenamento é feito em memória
 
 ## Próximas melhorias
 
-- Padronizar as respostas de erros de validação
 - Adicionar testes de integração dos endpoints
 - Persistir os dados com PostgreSQL
 - Documentar a API com Swagger/OpenAPI

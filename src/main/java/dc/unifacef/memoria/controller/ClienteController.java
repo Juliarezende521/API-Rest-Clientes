@@ -23,6 +23,18 @@ public class ClienteController {
         return ResponseEntity.ok(service.listar());
     }
 
+    // GET - buscar um cliente pelo ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Cliente> buscarPorId(@PathVariable Long id) {
+        Cliente cliente = service.buscarPorId(id);
+
+        if (cliente != null) {
+            return ResponseEntity.ok(cliente); // sucesso - 200
+        }
+
+        return ResponseEntity.notFound().build(); // cliente não encontrado - 404
+    }
+
     // POST - cadastrar um novo cliente e retornar 201 Created
     @PostMapping
     public ResponseEntity<Cliente> criar(@RequestBody Cliente cliente) {

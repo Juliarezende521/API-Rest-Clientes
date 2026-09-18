@@ -10,10 +10,10 @@ import java.util.List;
 public class ClienteService {
 
     // lista privada para simular o banco de dados
-    private List<Cliente> clientes = new ArrayList<Cliente>();
+    private final List<Cliente> clientes = new ArrayList<>();
 
     // mecanismo para gerar o ID automaticamente
-    private Long nextId = 1L;
+    private long nextId = 1L;
 
     // retorna todos os clientes
     public List<Cliente> listar() {

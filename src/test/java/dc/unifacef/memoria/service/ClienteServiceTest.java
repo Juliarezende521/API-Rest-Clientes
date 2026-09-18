@@ -1,5 +1,6 @@
 package dc.unifacef.memoria.service;
 
+import dc.unifacef.memoria.exception.EmailJaCadastradoException;
 import dc.unifacef.memoria.model.Cliente;
 import dc.unifacef.memoria.repository.ClienteRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +42,21 @@ class ClienteServiceTest {
         assertEquals(1L, criado.getId());
         assertEquals("Ana", criado.getNome());
         verify(repository).save(cliente);
+    }
+
+    @Test
+    void deveRejeitarEmailDuplicadoAoCriar() {
+        Cliente cliente = new Cliente(
+                null, "Ana", "ANA@email.com", 25
+        );
+        when(repository.existsByEmailIgnoreCase("ana@email.com"))
+                .thenReturn(true);
+
+        assertThrows(
+                EmailJaCadastradoException.class,
+                () -> service.criar(cliente)
+        );
+        verify(repository, never()).save(any());
     }
 
     @Test
@@ -98,6 +114,28 @@ class ClienteServiceTest {
         assertEquals("Ana Souza", atualizado.getNome());
         assertEquals(Integer.valueOf(26), atualizado.getIdade());
         verify(repository).save(existente);
+    }
+
+    @Test
+    void deveRejeitarEmailDeOutroClienteAoAtualizar() {
+        Cliente existente = new Cliente(
+                1L, "Ana", "ana@email.com", 25
+        );
+        Cliente novosDados = new Cliente(
+                null, "Ana", "BRUNO@email.com", 26
+        );
+
+        when(repository.findById(1L))
+                .thenReturn(Optional.of(existente));
+        when(repository.existsByEmailIgnoreCaseAndIdNot(
+                "bruno@email.com", 1L))
+                .thenReturn(true);
+
+        assertThrows(
+                EmailJaCadastradoException.class,
+                () -> service.atualizar(1L, novosDados)
+        );
+        verify(repository, never()).save(any());
     }
 
     @Test

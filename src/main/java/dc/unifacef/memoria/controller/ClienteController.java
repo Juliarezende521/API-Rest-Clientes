@@ -3,7 +3,6 @@ package dc.unifacef.memoria.controller;
 import dc.unifacef.memoria.model.Cliente;
 import dc.unifacef.memoria.service.ClienteService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,9 +13,11 @@ import java.util.List;
 @RequestMapping("/clientes") // mapeamento da requisição
 public class ClienteController {
 
-    // injeção de dependência
-    @Autowired
-    ClienteService service;
+    private final ClienteService service;
+
+    public ClienteController(ClienteService service) {
+        this.service = service;
+    }
 
     // GET - listar todos os clientes
     @GetMapping

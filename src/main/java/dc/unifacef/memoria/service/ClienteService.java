@@ -1,60 +1,53 @@
 package dc.unifacef.memoria.service;
 
 import dc.unifacef.memoria.model.Cliente;
+import dc.unifacef.memoria.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ClienteService {
 
-    // lista privada para simular o banco de dados
-    private final List<Cliente> clientes = new ArrayList<>();
+    private final ClienteRepository repository;
 
-    // mecanismo para gerar o ID automaticamente
-    private long nextId = 1L;
+    public ClienteService(ClienteRepository repository) {
+        this.repository = repository;
+    }
 
-    // retorna todos os clientes
     public List<Cliente> listar() {
-        return this.clientes;
+        return repository.findAll();
     }
 
-    // gera o ID, adiciona na lista e retorna o cliente
     public Cliente criar(Cliente cliente) {
-        cliente.setId(nextId);
-        nextId++;
-        this.clientes.add(cliente);
-        return cliente;
+        cliente.setId(null);
+        return repository.save(cliente);
     }
 
-    // retorna o cliente ou null
     public Cliente buscarPorId(Long id) {
-        // utilizando stream do Java 8+ para busca
-        return this.clientes.stream()
-                .filter(c -> c.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+        return repository.findById(id).orElse(null);
     }
 
-    // remove o cliente e retorna um booleano de sucesso
     public boolean remover(Long id) {
-        // a função removeIf faz o for pra gente
-        // para cada cliente c, verifica se id no vetor é igual ao id do usuário
-        return this.clientes.removeIf(c -> c.getId().equals(id));
+        if (!repository.existsById(id)) {
+            return false;
+        }
+
+        repository.deleteById(id);
+        return true;
     }
 
-    // localiza pelo ID e substitui os dados
-    public Cliente atualizar(Long id, Cliente novo) {
-        novo.setId(id);
-        // percorre para atualizar o cliente
-        for (int i = 0; i < this.clientes.size(); i++) {
-            if (this.clientes.get(i).getId().equals(id)) {
-                // encontrei
-                this.clientes.set(i, novo); // atualiza
-                return novo;
-            }
+    public Cliente atualizar(Long id, Cliente novosDados) {
+        Cliente cliente = buscarPorId(id);
+
+        if (cliente == null) {
+            return null;
         }
-        return null; // cliente não encontrado para atualizar
+
+        cliente.setNome(novosDados.getNome());
+        cliente.setEmail(novosDados.getEmail());
+        cliente.setIdade(novosDados.getIdade());
+
+        return repository.save(cliente);
     }
 }

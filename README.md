@@ -1,22 +1,43 @@
-# API REST de Clientes — CRUD em Memória
+<h1 align="center">API REST de Clientes</h1>
 
-API desenvolvida com **Spring Boot** para gerenciar o cadastro de clientes de uma loja, utilizando armazenamento em memória (sem banco de dados).
+<p align="center">
+  CRUD de clientes desenvolvido com Java e Spring Boot, utilizando armazenamento em memória.
+</p>
 
-Projeto prático da disciplina de Paradigmas da Programacao -ORIENTADO AO OBJETO — **Unifacef**.
+<p align="center">
+  <img src="https://img.shields.io/badge/Java-21-ED8B00?style=flat-square&logo=openjdk&logoColor=white" alt="Java 21">
+  <img src="https://img.shields.io/badge/Spring_Boot-4.0.6-6DB33F?style=flat-square&logo=springboot&logoColor=white" alt="Spring Boot 4.0.6">
+  <img src="https://img.shields.io/badge/Maven-Build-C71A36?style=flat-square&logo=apachemaven&logoColor=white" alt="Maven">
+</p>
 
----
+## Sobre o projeto
+
+Esta API permite cadastrar, listar, atualizar e remover clientes de uma loja. Os dados são armazenados em memória por meio de uma lista, portanto são apagados quando a aplicação é encerrada.
+
+O projeto foi desenvolvido como atividade prática da disciplina de **Paradigmas de Programação Orientada a Objetos**, no curso de Ciência da Computação da **Uni-FACEF**.
+
+## Funcionalidades
+
+- Cadastro de clientes
+- Listagem de todos os clientes
+- Atualização de clientes pelo ID
+- Remoção de clientes pelo ID
+- Geração automática de identificadores
+- Respostas HTTP adequadas para cada operação
 
 ## Tecnologias
 
 - Java 21
 - Spring Boot 4.0.6
+- Spring Web MVC
 - Maven
+- JUnit 5
 
----
+## Arquitetura
 
-## Estrutura do Projeto
+A aplicação está separada em camadas:
 
-```
+```text
 src/main/java/dc/unifacef/memoria/
 ├── controller/
 │   └── ClienteController.java
@@ -27,35 +48,13 @@ src/main/java/dc/unifacef/memoria/
 └── MemoriaApplication.java
 ```
 
----
+- **Controller:** recebe as requisições HTTP e devolve as respostas.
+- **Service:** concentra as regras de cadastro, busca, atualização e remoção.
+- **Model:** representa os dados de um cliente.
+- **Application:** inicializa a aplicação Spring Boot.
 
-## Endpoints
+## Modelo de cliente
 
-Base URL: `http://localhost:8080`
-
-| Método | Rota | Descrição | Status de retorno |
-|--------|------|-----------|-------------------|
-| GET | `/clientes` | Lista todos os clientes | 200 OK |
-| POST | `/clientes` | Cadastra um novo cliente | 201 Created |
-| PUT | `/clientes/{id}` | Atualiza os dados de um cliente | 200 OK / 404 Not Found |
-| DELETE | `/clientes/{id}` | Remove um cliente pelo ID | 204 No Content / 404 Not Found |
-
----
-
-## Exemplos de Uso
-
-### POST /clientes — Cadastrar cliente
-
-**Requisição:**
-```json
-{
-  "nome": "João Silva",
-  "email": "joao@email.com",
-  "idade": 28
-}
-```
-
-**Resposta (201 Created):**
 ```json
 {
   "id": 1,
@@ -65,9 +64,46 @@ Base URL: `http://localhost:8080`
 }
 ```
 
-### GET /clientes — Listar todos
+O campo `id` é gerado automaticamente durante o cadastro.
 
-**Resposta (200 OK):**
+## Endpoints
+
+URL base: `http://localhost:8080`
+
+| Método | Endpoint | Descrição | Resposta |
+|:--|:--|:--|:--|
+| `GET` | `/clientes` | Lista todos os clientes | `200 OK` |
+| `POST` | `/clientes` | Cadastra um cliente | `201 Created` |
+| `PUT` | `/clientes/{id}` | Atualiza um cliente | `200 OK` ou `404 Not Found` |
+| `DELETE` | `/clientes/{id}` | Remove um cliente | `204 No Content` ou `404 Not Found` |
+
+## Exemplos de uso
+
+### Cadastrar um cliente
+
+```http
+POST /clientes
+Content-Type: application/json
+```
+
+```json
+{
+  "nome": "João Silva",
+  "email": "joao@email.com",
+  "idade": 28
+}
+```
+
+A API retorna `201 Created`, o cliente cadastrado e o endereço do novo recurso no cabeçalho `Location`.
+
+### Listar clientes
+
+```http
+GET /clientes
+```
+
+Exemplo de resposta:
+
 ```json
 [
   {
@@ -79,9 +115,13 @@ Base URL: `http://localhost:8080`
 ]
 ```
 
-### PUT /clientes/1 — Atualizar cliente
+### Atualizar um cliente
 
-**Requisição:**
+```http
+PUT /clientes/1
+Content-Type: application/json
+```
+
 ```json
 {
   "nome": "João Souza",
@@ -90,41 +130,79 @@ Base URL: `http://localhost:8080`
 }
 ```
 
-**Resposta (200 OK):**
-```json
-{
-  "id": 1,
-  "nome": "João Souza",
-  "email": "joao.souza@email.com",
-  "idade": 29
-}
+### Remover um cliente
+
+```http
+DELETE /clientes/1
 ```
 
-### DELETE /clientes/1 — Remover cliente
-
-**Resposta:** `204 No Content`  
-Se o ID não existir: `404 Not Found`
-
----
+A API retorna `204 No Content` quando a remoção é concluída ou `404 Not Found` quando o ID não existe.
 
 ## Como executar
 
-**Pré-requisitos:** Java 21 e Maven instalados.
+### Pré-requisitos
+
+- Java 21
+- Git
+
+### Instalação
 
 ```bash
-# Clone o repositório
-git clone https://github.com/seu-usuario/memoria.git
-cd memoria
+git clone https://github.com/Juliarezende521/API-Rest-Clientes.git
+cd API-Rest-Clientes
+```
 
-# Execute
+No macOS ou Linux:
+
+```bash
 ./mvnw spring-boot:run
 ```
 
-A API estará disponível em `http://localhost:8080`.
+No Windows:
 
----
+```powershell
+.\mvnw.cmd spring-boot:run
+```
 
-## Testando a API
+Depois, acesse `http://localhost:8080/clientes`.
 
-Use o **Postman** ou **Insomnia** para testar os endpoints POST, PUT e DELETE.  
-O GET pode ser testado diretamente no navegador.
+## Como testar
+
+Os endpoints podem ser testados com:
+
+- Postman
+- Insomnia
+- Thunder Client
+- cURL
+
+Exemplo com cURL:
+
+```bash
+curl -X POST http://localhost:8080/clientes \
+  -H "Content-Type: application/json" \
+  -d '{"nome":"João Silva","email":"joao@email.com","idade":28}'
+```
+
+## Limitação atual
+
+O projeto não utiliza banco de dados. Como o armazenamento é feito em memória, todos os clientes cadastrados são perdidos quando a aplicação é reiniciada.
+
+## Próximas melhorias
+
+- Adicionar busca de cliente por ID
+- Validar nome, e-mail e idade
+- Criar tratamento global de erros
+- Adicionar testes unitários e de integração
+- Persistir os dados com PostgreSQL
+- Documentar a API com Swagger/OpenAPI
+
+## Aprendizados
+
+Este projeto pratica conceitos de:
+
+- Programação orientada a objetos
+- Arquitetura em camadas
+- Injeção de dependências
+- Criação de APIs REST
+- Métodos e códigos de status HTTP
+- Manipulação de coleções com Java
